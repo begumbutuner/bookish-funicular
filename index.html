@@ -15,6 +15,7 @@
             --black: #111111;
         }
 
+        /* Mobile-First Native App Setup */
         body {
             background-color: #333; 
             font-family: "termina", sans-serif;
@@ -22,53 +23,47 @@
             margin: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            align-items: flex-start; /* CRUCIAL: Anchors to top to prevent grey gaps when address bar hides */
+            height: 100vh;
+            height: 100dvh; /* Flawless mobile viewport sizing */
+            overflow: hidden; /* Locks the background entirely */
         }
 
-        /* Make mobile feel completely native (No grey bars on top/bottom) */
-        @media (max-width: 480px) {
+        /* Seamless App Container */
+        #phone-wrapper {
+            width: 100%;
+            max-width: 450px;
+            height: 100%;
+            background-color: var(--cream);
+            background-image: radial-gradient(var(--black) 3px, transparent 0);
+            background-size: 45px 45px;
+            background-attachment: fixed; /* Ensures the dot grid never breaks or leaves empty space */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Desktop Framing (Restores rounded corners and borders on larger screens) */
+        @media (min-width: 481px) {
             body {
-                background-color: var(--cream);
+                align-items: center; /* Re-centers vertically for desktop */
+            }
+            #phone-wrapper {
+                height: 90vh;
+                max-height: 896px;
+                border: 8px solid var(--black);
+                border-radius: 40px;
+                box-shadow: 0 0 50px rgba(0,0,0,0.5);
+                background-attachment: local;
             }
         }
 
         /* Custom Neobrutalist Scrollbars */
-        ::-webkit-scrollbar {
-            width: 12px;
-        }
-        ::-webkit-scrollbar-track {
-            background: var(--cream);
-            border-left: 3px solid var(--black);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--red);
-            border: 3px solid var(--black);
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--orange);
-        }
-
-        #phone-wrapper {
-            width: 100%;
-            max-width: 450px;
-            height: 100vh;
-            height: 100dvh; /* Adapts properly to mobile browser UI */
-            background-color: var(--cream);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #app-bg {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-image: radial-gradient(var(--black) 3px, transparent 0);
-            background-size: 45px 45px;
-            z-index: 0;
-            pointer-events: none;
-        }
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: var(--cream); border-left: 3px solid var(--black); }
+        ::-webkit-scrollbar-thumb { background: var(--red); border: 3px solid var(--black); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--orange); }
 
         #content-area {
             flex-grow: 1;
@@ -76,8 +71,9 @@
             flex-direction: column;
             padding: 25px 25px 0 25px; /* Responsive side padding */
             z-index: 10;
-            overflow: hidden; /* Prevents global scroll, forces child scrolling */
-            min-height: 0; /* Crucial to prevent nested flexbox blowouts / unwanted scroll */
+            overflow-y: auto; /* Smart scroll: Allows main screen to scroll naturally ONLY if it overflows a tiny screen */
+            overflow-x: hidden;
+            min-height: 0; 
         }
 
         .neobrutalist-btn {
@@ -431,7 +427,7 @@
         .help-btn {
             position: absolute;
             bottom: 20px;
-            right: 0px;
+            right: 6px; /* Moved slightly left so the shadow clears the border effortlessly */
             width: 65px;
             height: 65px;
             border-radius: 50%;
@@ -466,7 +462,6 @@
 <body>
 
     <div id="phone-wrapper">
-        <div id="app-bg"></div>
         <div id="nav-header"></div>
         
         <div id="content-area">
